@@ -23,7 +23,7 @@ int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
 
 
 
-void lerArquivo(std::string arq);
+void lerArquivo();
 
 
 #endif // ESTRUTURAS_HPP_INCLUDED
