@@ -6,13 +6,13 @@ projects                      :  1
 jobs (incl. supersource/sink ):  12
 horizon                       :  35
 RESOURCES
-  - renewable                 :  2   R
+  - renewable                 :  22   R
   - nonrenewable              :  0   N
   - doubly constrained        :  0   D
 ************************************************************************
 PROJECT INFORMATION:
 pronr.  #jobs rel.date duedate tardcost  MPM-Time
-    1     10      0       38       26       38
+   1     10      0       38       26       38
 ************************************************************************
 PRECEDENCE RELATIONS:
 jobnr.    #modes  #successors   successors
