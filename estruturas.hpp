@@ -20,6 +20,7 @@ typedef struct dadosDasTarefas{
 int QuantidadeDeRecursos;
 int QuantidadeDeTarefas;
 int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
+int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
 
