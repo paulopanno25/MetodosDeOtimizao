@@ -347,7 +347,7 @@ void lerArquivo(){
         }
     }
 
-    //Imprimir para vê se está saindo correto
+    //Imprimir para vê se está saindo correto, depois pode apagar. Não consegui testar pq o código não fez nada no meu pc
     for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
         for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
         cout << Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas] << " ";
