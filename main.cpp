@@ -345,5 +345,12 @@ void lerArquivo(){
                 cout << '0';
             }
         }
+    }
+
+    //Imprimir para vê se está saindo correto
+    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
+        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
+        cout << Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas] << " ";
+        }
     }    
 }
