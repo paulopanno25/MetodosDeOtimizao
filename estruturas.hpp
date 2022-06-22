@@ -23,7 +23,6 @@ int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
-
 void lerArquivo();
 
 

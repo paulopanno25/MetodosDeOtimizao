@@ -297,9 +297,6 @@ void lerArquivo(){
                     temporario2++;
                 }   
                 
-
-                
-                
                 //cout<< word << endl;
             }
             
@@ -323,11 +320,6 @@ void lerArquivo(){
                 sscanf(word.data(), "%d", &(auxppp));
                         
                 QuantidadeDeCadaRecursoDisponivel[3]=auxppp;//Armazena o ultimo 
-                
-
-               
-
-
             }
             i++; 
 
@@ -335,12 +327,23 @@ void lerArquivo(){
             
         input_file.close();
 
-        
     }
 
+    void PreencherMatriz();
 
+    int Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas], j;
+    int QuantidadeDeTarefasColuna = QuantidadeDeTarefas;
+    int QuantidadeDeTarefasLinhas = QuantidadeDeTarefas;
+    int IdSucessores = IdSucessores;
+    i = 0;
 
-
+    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
+        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
+            if (QuantidadeDeTarefasColuna == IdSucessores){ 
+                cout << '1';
+            } else {
+                cout << '0';
+            }
+        }
+    }    
 }
-
-
