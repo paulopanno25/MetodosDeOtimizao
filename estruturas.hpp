@@ -17,6 +17,8 @@ typedef struct dadosDasTarefas{
 
 }DadosDasTarefas;
 
+int entrada[MAX_TAREFAS];// vetor que armazena todos os dados inteiros de uma linha d arquivo
+
 int QuantidadeDeRecursos;
 int QuantidadeDeTarefas;
 int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
