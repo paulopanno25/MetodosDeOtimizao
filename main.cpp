@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 
+
 #include "estruturas.hpp"
 using namespace std; 
 
@@ -22,6 +23,7 @@ using std::fill_n; using std::istringstream;
 int main(){
 
     lerArquivo();
+    
 
     return 0;
 
@@ -29,16 +31,15 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j301_11.sm");
+    string filename("j10.sm");
     string word;
     vector<string> words;
     vector<string> words2;
-    vector<string> words3;
-    int i=0, temporario=0, temporario2=0, auxiliar=0, aux_id=32, x=0,p=0;
+    int i=0, temporario=0, temporario2=0, auxiliar=0, x=0,p=0;
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j301_11.sm");
+    ifstream input_file("j10.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -51,7 +52,6 @@ void lerArquivo(){
         while( !input_file.eof()){
             getline(input_file,word);
             size_t pos = 0;
-            int auxiliarDeLeitura=0;
             
             // Pega a quantidade de recursos e armazena
             if(i==8){
@@ -82,8 +82,7 @@ void lerArquivo(){
                 cout << QuantidadeDeTarefas <<endl;
                 
             }
-            words3.clear();
-            
+     
             //Pega a quantidade de sucessores e seus ids e armazena
             if(i>=18){
                 
@@ -106,9 +105,9 @@ void lerArquivo(){
                         p++;
                     }
 
-                     cout << DadosDasTarefas[temporario].Id << " " << DadosDasTarefas[temporario].QuantidadeDeSucessores << " " 
+                  /*   cout << DadosDasTarefas[temporario].Id << " " << DadosDasTarefas[temporario].QuantidadeDeSucessores << " " 
                    << DadosDasTarefas[temporario].IdSucessores[0] << " " <<  DadosDasTarefas[temporario].IdSucessores[1] << " " << DadosDasTarefas[temporario].IdSucessores[2] <<endl;
-                    
+                    */
                     temporario++;
 
                    
@@ -138,11 +137,11 @@ void lerArquivo(){
                         p++;
                     }
 
-                    cout << DadosDasTarefas[temporario2].DuracaoDaTarefa<<" "<<DadosDasTarefas[temporario2].QuantidadeDeRecursosConsumidos[0] 
+                  /*  cout << DadosDasTarefas[temporario2].DuracaoDaTarefa<<" "<<DadosDasTarefas[temporario2].QuantidadeDeRecursosConsumidos[0] 
                         <<" "<<DadosDasTarefas[temporario2].QuantidadeDeRecursosConsumidos[1]
                         <<" "<<DadosDasTarefas[temporario2].QuantidadeDeRecursosConsumidos[2]
                         <<" "<<DadosDasTarefas[temporario2].QuantidadeDeRecursosConsumidos[3]<< endl;
-
+*/
                     
                 
                     temporario2++;
@@ -168,6 +167,7 @@ void lerArquivo(){
 */
 
             }
+            
             i++; 
 
         }
@@ -176,28 +176,43 @@ void lerArquivo(){
 
     }
 
-    void PreencherMatriz();
+    PreencherMatrizDeSucessores(DadosDasTarefas);
 
-    int Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas], j;
-    int QuantidadeDeTarefasColuna = QuantidadeDeTarefas;
-    int QuantidadeDeTarefasLinhas = QuantidadeDeTarefas;
-    int IdSucessores = IdSucessores;
-    i = 0;
+       
+}
 
-    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
-        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
-            if (QuantidadeDeTarefasColuna == IdSucessores){ 
-                cout << '1';
-            } else {
-                cout << '0';
-            }
+void PreencherMatrizDeSucessores(DadosDasTarefas infoTarefas[]){
+    int i,j,aux;
+
+    //Zera Matriz
+    for (i = 0; i <  QuantidadeDeTarefas+2; i++){ //linha
+        for (j = 0; j < QuantidadeDeTarefas+2; j++){ //coluna
+            Matriz[i][j]=0;
         }
     }
-
-    //Imprimir para vê se está saindo correto, depois pode apagar. Não consegui testar pq o código não fez nada no meu pc
-    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
-        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
-        cout << Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas] << " ";
+    
+    //Preenche Matriz
+    for (i = 0; i <QuantidadeDeTarefas+2; i++){ //linha
+        for (j = 0; j <QuantidadeDeTarefas+2; j++){ //coluna
+           //percorre e encontra ids de sucessores que estejam na linha
+           for(aux=0;aux<(infoTarefas[i].QuantidadeDeSucessores);aux++){
+            if(infoTarefas[i].IdSucessores[aux]==(j+1)){
+                Matriz[i][j]=1;
+            }
+          } 
         }
-    }    
+    }
+    
+    //Imprimir Matriz
+    /*i=0;
+    while(i<QuantidadeDeTarefas+2){
+        for(j=0; j<QuantidadeDeTarefas+2;j++){
+            cout << Matriz[i][j] << " ";
+        }
+        cout << infoTarefas[i].Id << " " << endl;
+        i++;
+    }*/
+
+   
 }
+

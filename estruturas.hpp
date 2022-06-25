@@ -21,11 +21,13 @@ int entrada[MAX_TAREFAS];// vetor que armazena todos os dados inteiros de uma li
 
 int QuantidadeDeRecursos;
 int QuantidadeDeTarefas;
+int Matriz[MAX_TAREFAS][MAX_TAREFAS];
 int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
 void lerArquivo();
+void PreencherMatrizDeSucessores(DadosDasTarefas DadosDasTarefas[]);
 
 
 #endif // ESTRUTURAS_HPP_INCLUDED
