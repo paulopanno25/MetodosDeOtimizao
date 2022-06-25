@@ -174,12 +174,30 @@ void lerArquivo(){
             
         input_file.close();
 
-        
     }
 
+    void PreencherMatriz();
 
+    int Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas], j;
+    int QuantidadeDeTarefasColuna = QuantidadeDeTarefas;
+    int QuantidadeDeTarefasLinhas = QuantidadeDeTarefas;
+    int IdSucessores = IdSucessores;
+    i = 0;
 
+    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
+        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
+            if (QuantidadeDeTarefasColuna == IdSucessores){ 
+                cout << '1';
+            } else {
+                cout << '0';
+            }
+        }
+    }
 
+    //Imprimir para vê se está saindo correto, depois pode apagar. Não consegui testar pq o código não fez nada no meu pc
+    for (QuantidadeDeTarefasLinhas = 0; i <  QuantidadeDeTarefasLinhas; i++){ //linha
+        for (QuantidadeDeTarefasColuna = 0; j < QuantidadeDeTarefasColuna; j++){ //coluna
+        cout << Matriz[QuantidadeDeTarefas][QuantidadeDeTarefas] << " ";
+        }
+    }    
 }
-
-
