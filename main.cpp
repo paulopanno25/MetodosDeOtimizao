@@ -177,6 +177,7 @@ void lerArquivo(){
     }
 
     PreencherMatrizDeSucessores(DadosDasTarefas);
+    OrdemDeExecucao(DadosDasTarefas);
 
        
 }
@@ -215,4 +216,80 @@ void PreencherMatrizDeSucessores(DadosDasTarefas infoTarefas[]){
 
    
 }
+
+void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
+    int flag,aux,aux2;
+    for(int j=0;j<QuantidadeDeTarefas+2; j++){
+        for(int i=0; i<(QuantidadeDeTarefas+2); i++){
+        MatrizIndObjOrd[j][i]=0;
+        //cout<<MatrizIndObjOrd[j][i]<< " ";
+        }//cout<<endl;  
+    }
+    for(int j=0;j<(QuantidadeDeTarefas+2);j++){
+        infoTarefas[j].Ordem = 0;  
+    }
+    
+
+    for(int i=0; i<(QuantidadeDeTarefas+1); i++){
+        for(int j=0; j<(QuantidadeDeTarefas+2); j++){
+            if(Matriz[i][j]!=0){
+                
+                if(i!=0){
+                    for(aux=0;aux<(QuantidadeDeTarefas+1);aux++){
+                        if(Matriz[aux][j]!=0){
+                            
+                           if(infoTarefas[aux].Ordem<infoTarefas[j].Ordem){
+                                infoTarefas[j].Ordem;
+                           }else{
+                            infoTarefas[j].Ordem=infoTarefas[aux].Ordem+1;
+                           }
+                            
+                        }
+                    }
+                }else{
+                    infoTarefas[j].Ordem=i;
+                }
+            }
+        }
+    }
+
+    for(int j=0;j<(QuantidadeDeTarefas+2);j++){
+        cout<< infoTarefas[j].Id << " " << infoTarefas[j].Ordem << endl;  
+    }
+
+    //flag = 1;
+    //while(flag){
+    //    flag=0;
+    //   for(int j=0; j<(QuantidadeDeTarefas+1); j++){
+
+
+    //   }
+   // }
+
+}
+
+void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
+
+}
+
+void CalculoFo(DadosDasTarefas infoTarefas[]){
+
+}
+
+void TempoDeExecucao(){
+
+}
+
+void EscreverSolucao(DadosDasTarefas infoTarefas[], const bool flag){
+
+}
+
+
+
+
+
+
+
+
+
 
