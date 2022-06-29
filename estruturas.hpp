@@ -15,6 +15,7 @@ typedef struct dadosDasTarefas{
     int DuracaoDaTarefa;
     int QuantidadeDeRecursosConsumidos[MAX_OBJ];
     int Ordem;
+    int IdDoAntecessor;
 
 }DadosDasTarefas;
 
@@ -23,8 +24,9 @@ int entrada[MAX_TAREFAS];// vetor que armazena todos os dados inteiros de uma li
 int QuantidadeDeRecursos;
 int QuantidadeDeTarefas;
 int Matriz[MAX_TAREFAS][MAX_TAREFAS];
-int MatrizIndObjOrd[MAX_TAREFAS][MAX_TAREFAS];
 int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
+int vetIndObjOrd[MAX_TAREFAS];
+int vetIndObjOrd2[MAX_TAREFAS];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
@@ -35,6 +37,7 @@ void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual);
 void CalculoFo(DadosDasTarefas infoTarefas[]);
 void TempoDeExecucao();
 void EscreverSolucao(DadosDasTarefas infoTarefas[], const bool flag);
+void LerDados();
 
 
 #endif // ESTRUTURAS_HPP_INCLUDED

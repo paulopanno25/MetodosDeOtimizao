@@ -218,15 +218,16 @@ void PreencherMatrizDeSucessores(DadosDasTarefas infoTarefas[]){
 }
 
 void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
-    int flag,aux,aux2;
-    for(int j=0;j<QuantidadeDeTarefas+2; j++){
-        for(int i=0; i<(QuantidadeDeTarefas+2); i++){
-        MatrizIndObjOrd[j][i]=0;
-        //cout<<MatrizIndObjOrd[j][i]<< " ";
-        }//cout<<endl;  
-    }
+    int flag,aux,aux2=0,f,aux3;
+
+    
+    //Zera vetor de ordems
     for(int j=0;j<(QuantidadeDeTarefas+2);j++){
-        infoTarefas[j].Ordem = 0;  
+
+        infoTarefas[j].Ordem = 0; 
+        infoTarefas[j].IdDoAntecessor = 0;  
+        vetIndObjOrd[j]=0; 
+        
     }
     
 
@@ -234,7 +235,7 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
         for(int j=0; j<(QuantidadeDeTarefas+2); j++){
             if(Matriz[i][j]!=0){
                 
-                if(i!=0){
+                if(i!=0){//função que verifica se existe alguma tarefa a ser realizada antes e qual a sua ordem.
                     for(aux=0;aux<(QuantidadeDeTarefas+1);aux++){
                         if(Matriz[aux][j]!=0){
                             
@@ -242,6 +243,7 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
                                 infoTarefas[j].Ordem;
                            }else{
                             infoTarefas[j].Ordem=infoTarefas[aux].Ordem+1;
+                            infoTarefas[j].IdDoAntecessor = aux+1;
                            }
                             
                         }
@@ -252,24 +254,64 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
             }
         }
     }
+   
+    //Cria vetor de antecessores(Vetor de indices ordenados) e vetor de ids
+    for(int j=0;j<(QuantidadeDeTarefas+2);j++){ 
+            vetIndObjOrd[j] = infoTarefas[j].Ordem;
+            vetIndObjOrd2[j] = infoTarefas[j].Id;
 
+    }
+    
+
+    //Ordena o vetor de ids das tarefas por antecessores
+    for(int prev=0; prev<(QuantidadeDeTarefas+2);prev++){
+        for(int next = prev+1; next<(QuantidadeDeTarefas+2);next++){
+            aux2 =vetIndObjOrd[prev];
+            aux3 = vetIndObjOrd2[prev];
+            if(vetIndObjOrd[next]<vetIndObjOrd[prev]){
+                vetIndObjOrd[prev]=vetIndObjOrd[next];
+                vetIndObjOrd2[prev]=vetIndObjOrd2[next];
+                vetIndObjOrd[next]=aux2;
+                vetIndObjOrd2[next]=aux3;
+            }
+        }
+    }
+    
+   //imprime Id e ordem da tarefa e duração
     for(int j=0;j<(QuantidadeDeTarefas+2);j++){
-        cout<< infoTarefas[j].Id << " " << infoTarefas[j].Ordem << endl;  
+        int aux4=vetIndObjOrd2[j];
+        cout<< vetIndObjOrd2[j] <<" - Ordem: "<< vetIndObjOrd[j] << " ,Duracao: " <<infoTarefas[aux4-1].DuracaoDaTarefa <<endl;  
     }
 
-    //flag = 1;
-    //while(flag){
-    //    flag=0;
-    //   for(int j=0; j<(QuantidadeDeTarefas+1); j++){
-
-
-    //   }
-   // }
+    HeuConstAleGul(infoTarefas, 10);//10% de aleatoriedade
+    
 
 }
 
 void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
+    int tam, pos, aux;
+    int vetAux[MAX_OBJ];
+    memcpy(&vetAux, &vetIndObjOrd2, sizeof(vetIndObjOrd2));
+    /*tam = MAX(1, (percentual / 100.0) * (QuantidadeDeTarefas+1));
+    for(int j = 0; j < tam; j++)
+    {
+        pos = j + rand()%((QuantidadeDeTarefas+1) - j);
+        aux = vetAux[pos];
+        vetAux[pos] = vetAux[j];
+        vetAux[j] = aux;
+    }
+    memset(&s.vetPesMoc, 0, sizeof(s.vetPesMoc));
+    memset(&s.vetIdMocObj, -1, sizeof(s.vetIdMocObj));
+    for(int j = 0; j < numObj; j++)
+        for(int i = 0; i < numMoc; i++)
+            if(s.vetPesMoc[i] + vetPesObj[vetAux[j]] <= vetCapMoc[i])
+            {
+                s.vetIdMocObj[vetAux[j]] = i;
+                s.vetPesMoc[i] += vetPesObj[vetAux[j]];
+                break;
+            }
 
+    */
 }
 
 void CalculoFo(DadosDasTarefas infoTarefas[]){
@@ -281,6 +323,10 @@ void TempoDeExecucao(){
 }
 
 void EscreverSolucao(DadosDasTarefas infoTarefas[], const bool flag){
+
+}
+
+void LerDados(){
 
 }
 
