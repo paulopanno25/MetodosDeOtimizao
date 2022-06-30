@@ -426,7 +426,7 @@ void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
     h = clock() - h;
     tempo = (double)h/CLOCKS_PER_SEC;
 
-   // printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
+    printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
 }
 
 void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
