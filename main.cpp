@@ -26,7 +26,7 @@ using std::fill_n; using std::istringstream;
 int main(){
 
     lerArquivo();
-    
+    LerDados();
 
     return 0;
 
@@ -34,7 +34,7 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j12060_7.sm");
+    string filename("j301_11.sm");
     string word;
     vector<string> words;
     vector<string> words2;
@@ -42,7 +42,7 @@ void lerArquivo(){
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j12060_7.sm");
+    ifstream input_file("j301_11.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -66,7 +66,7 @@ void lerArquivo(){
                
                 sscanf(words[22].data(), "%d", &QuantidadeDeRecursos); //converte string para inteiro
                 
-                cout << QuantidadeDeRecursos <<endl;
+                //cout << QuantidadeDeRecursos <<endl;
                 
             }
 
@@ -82,7 +82,7 @@ void lerArquivo(){
                if(QuantidadeDeTarefas==0){
                    sscanf(words2[9].data(), "%d", &QuantidadeDeTarefas);
                } //converte string para inteiro
-                cout << QuantidadeDeTarefas <<endl;
+               // cout << QuantidadeDeTarefas <<endl;
                 
             }
      
@@ -409,24 +409,24 @@ void CalculoFo(DadosDasTarefas infoTarefas[]){
         FO += Contador[j];
     }
 
-    EscreverSolucao(infoTarefas, Max);
+   EscreverSolucao(infoTarefas, Max);
     
 }
 
 void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
     clock_t h;
     double tempo;
-    const int repeticoes = 1000;
-    printf("\n\n>>> TESTE - HEURISTICAS CONSTRUTIVAS - PMM3 - %d REPETICOES\n", repeticoes);
+  // const int repeticoes = 1000;
+   // printf("\n\n>>> TESTE - HEURISTICAS CONSTRUTIVAS - PMM3 - %d REPETICOES\n", repeticoes);
 
     //---
     h = clock();
-    for(int r = 0; r < repeticoes; r++)
+   // for(int r = 0; r < repeticoes; r++)
         HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
     h = clock() - h;
     tempo = (double)h/CLOCKS_PER_SEC;
 
-    printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
+   printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
 }
 
 void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
@@ -446,6 +446,85 @@ void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
 }
 
 void LerDados(){
+    string filename("j301_1.sol");
+    string word;
+    vector<string> words;
+    int i=0, temporario=0,x=0;
+    DadosDasTarefas solucao[MAX_TAREFAS];
+    
+
+    ifstream input_file("j301_1.sol");
+    
+    if(!input_file.is_open()){
+        cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
+        
+
+    }else{  
+        input_file >> word;
+        string space_delimiter = " ";
+    
+        while( !input_file.eof()){
+            getline(input_file,word);
+            size_t pos = 0;
+            // Pega a FO
+            if(i==0){
+                while ((pos = word.find(space_delimiter)) != string::npos) { //Separa a string por ' '
+                    words.push_back(word.substr(0, pos));
+                    word.erase(0, pos + space_delimiter.length());
+                }
+               
+                sscanf(word.data(), "%d", &fo); //converte string para inteiro
+               // cout << fo <<endl;
+                
+            }
+            
+            // Pega a Makespan
+            if(i==1){
+                while ((pos = word.find(space_delimiter)) != string::npos) { //Separa a string por ' '
+                    words.push_back(word.substr(0, pos));
+                    word.erase(0, pos + space_delimiter.length());
+                }
+               
+                sscanf(word.data(), "%d", &Mkspan); //converte string para inteiro
+               // cout << Mkspan <<endl;
+                
+            }
+     
+            //Pega o id e o tempo de inicio
+            if(i>=4){
+                
+                if(i<=(4+(QuantidadeDeTarefas+1))){
+                   
+                    istringstream ss(word);
+                   
+                    x=0;
+                    while( ss){
+                    ss >> entrada[x];
+                    x++;
+
+                    }
+
+                    solucao[temporario].Id = entrada[0];
+                    solucao[temporario].TempoDeInicio = entrada[1];
+                    
+
+                   // cout << solucao[temporario].Id  << " " << solucao[temporario].TempoDeInicio  <<endl;
+                    
+                    temporario++;
+
+                   
+                }                                
+                    
+                
+            }
+            
+            i++; 
+
+        }
+            
+        input_file.close();
+
+    }
 
 }
 

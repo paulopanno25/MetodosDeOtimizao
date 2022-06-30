@@ -35,6 +35,12 @@ DadosDasTarefas vetorGeraldeInformacoes[MAX_TAREFAS];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
+//leitura do arquivo sol
+int fo;
+int Mkspan;
+
+
+
 void lerArquivo();
 void PreencherMatrizDeSucessores(DadosDasTarefas DadosDasTarefas[]);
 void OrdemDeExecucao(DadosDasTarefas infoTarefas[]);
