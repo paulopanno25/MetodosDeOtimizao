@@ -34,7 +34,7 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j301_11.sm");
+    string filename("j10.sm");
     string word;
     vector<string> words;
     vector<string> words2;
@@ -42,7 +42,7 @@ void lerArquivo(){
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j301_11.sm");
+    ifstream input_file("j10.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -287,7 +287,7 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
     }*/
 
     HeuConstAleGul(infoTarefas, 10);//10% de aleatoriedade
-    TempoDeExecucao(infoTarefas);
+    ///TempoDeExecucao(infoTarefas);
     
 
 }
@@ -356,17 +356,20 @@ void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
                     if(cont == QuantidadeDeRecursos){
                         vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
                         vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]-1] = 1;
+
+                        int antecPosicao = (infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor);
+                        int antecPosicaoNEXT = (infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor);
+
                         infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = 
-                        infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].TempoDeInicio + 
-                        infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].DuracaoDaTarefa;
+                        infoTarefas[antecPosicao].TempoDeInicio + infoTarefas[antecPosicao].DuracaoDaTarefa;
                         
                         infoTarefas[vetIndObjOrd2[vetAux[next]-1]-1].TempoDeInicio = 
-                        infoTarefas[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor].TempoDeInicio + 
-                        infoTarefas[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor].DuracaoDaTarefa;
+                        infoTarefas[antecPosicaoNEXT].TempoDeInicio + infoTarefas[antecPosicaoNEXT].DuracaoDaTarefa;
                     }
                 }else{
                     vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
-                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].TempoDeInicio + infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].DuracaoDaTarefa;
+                    int antecPosicao = (infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor);
+                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = infoTarefas[antecPosicao].TempoDeInicio + infoTarefas[antecPosicao].DuracaoDaTarefa;
                     Contador[prev] =  infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio + infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa;
                 }
                
@@ -376,7 +379,7 @@ void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
 
 
     
-  /* for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
+    /* for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
         cout << vetDeExecucao[j] << " ";
     }
     cout<<endl;
@@ -422,7 +425,7 @@ void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
     //---
     h = clock();
    // for(int r = 0; r < repeticoes; r++)
-        HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
+        //HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
     h = clock() - h;
     tempo = (double)h/CLOCKS_PER_SEC;
 
