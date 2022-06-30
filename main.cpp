@@ -34,7 +34,7 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j10.sm");
+    string filename("j12060_7.sm");
     string word;
     vector<string> words;
     vector<string> words2;
@@ -42,7 +42,7 @@ void lerArquivo(){
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j10.sm");
+    ifstream input_file("j12060_7.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -287,7 +287,7 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
     }*/
 
     HeuConstAleGul(infoTarefas, 10);//10% de aleatoriedade
-    ///TempoDeExecucao(infoTarefas);
+    //TempoDeExecucao(infoTarefas);
     
 
 }
@@ -419,13 +419,13 @@ void CalculoFo(DadosDasTarefas infoTarefas[]){
 void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
     clock_t h;
     double tempo;
-  // const int repeticoes = 1000;
+    const int repeticoes = 1000;
    // printf("\n\n>>> TESTE - HEURISTICAS CONSTRUTIVAS - PMM3 - %d REPETICOES\n", repeticoes);
 
     //---
     h = clock();
-   // for(int r = 0; r < repeticoes; r++)
-        //HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
+    for(int r = 0; r < repeticoes; r++)
+        HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
     h = clock() - h;
     tempo = (double)h/CLOCKS_PER_SEC;
 
