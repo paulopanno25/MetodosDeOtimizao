@@ -12,6 +12,9 @@
 
 
 #include "estruturas.hpp"
+
+#define MAX(X,Y) ((X > Y) ? X : Y)
+
 using namespace std; 
 
 using std::cout; using std::cerr;
@@ -31,7 +34,7 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j10.sm");
+    string filename("j12060_7.sm");
     string word;
     vector<string> words;
     vector<string> words2;
@@ -39,7 +42,7 @@ void lerArquivo(){
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j10.sm");
+    ifstream input_file("j12060_7.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -278,51 +281,167 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
     }
     
    //imprime Id e ordem da tarefa e duração
-    for(int j=0;j<(QuantidadeDeTarefas+2);j++){
+   /* for(int j=0;j<(QuantidadeDeTarefas+2);j++){
         int aux4=vetIndObjOrd2[j];
         cout<< vetIndObjOrd2[j] <<" - Ordem: "<< vetIndObjOrd[j] << " ,Duracao: " <<infoTarefas[aux4-1].DuracaoDaTarefa <<endl;  
-    }
+    }*/
 
     HeuConstAleGul(infoTarefas, 10);//10% de aleatoriedade
+    TempoDeExecucao(infoTarefas);
     
 
 }
 
 void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
     int tam, pos, aux;
-    int vetAux[MAX_OBJ];
+    int vetAux[MAX_TAREFAS];
+   
+   
     memcpy(&vetAux, &vetIndObjOrd2, sizeof(vetIndObjOrd2));
-    /*tam = MAX(1, (percentual / 100.0) * (QuantidadeDeTarefas+1));
+   
+    tam = MAX(1, (percentual / 100.0) * (QuantidadeDeTarefas+2));
+   
     for(int j = 0; j < tam; j++)
     {
-        pos = j + rand()%((QuantidadeDeTarefas+1) - j);
+        pos = j + rand()%((QuantidadeDeTarefas+2) - j);
         aux = vetAux[pos];
         vetAux[pos] = vetAux[j];
         vetAux[j] = aux;
     }
-    memset(&s.vetPesMoc, 0, sizeof(s.vetPesMoc));
-    memset(&s.vetIdMocObj, -1, sizeof(s.vetIdMocObj));
-    for(int j = 0; j < numObj; j++)
-        for(int i = 0; i < numMoc; i++)
-            if(s.vetPesMoc[i] + vetPesObj[vetAux[j]] <= vetCapMoc[i])
-            {
-                s.vetIdMocObj[vetAux[j]] = i;
-                s.vetPesMoc[i] += vetPesObj[vetAux[j]];
-                break;
-            }
+    memset(vetDeExecucao, 0, sizeof(vetDeExecucao));
+    memset(Contador, 0, sizeof(Contador));
+    
+    vetIndObjOrd[0] = -1;
+    vetDeExecucao[0]= -1;
+    int cont=0;
+    
 
-    */
+    for(int prev=0; prev<(QuantidadeDeTarefas+2);prev++){
+        for(int next = prev+1; next<(QuantidadeDeTarefas+2);next++){
+            int aux2[QuantidadeDeRecursos];
+            if((vetIndObjOrd[prev]) == 0 && vetIndObjOrd[vetAux[next]-1] == 0 && (vetIndObjOrd2[prev] != vetIndObjOrd2[vetAux[next]-1])){
+               /* cout<< (vetIndObjOrd[prev]) << " ";
+                cout<< vetIndObjOrd2[prev] << " ";
+                cout<< vetIndObjOrd[vetAux[next]-1] << " ";
+                cout<< vetIndObjOrd2[vetAux[next]-1] << " ";
+                cout<<endl;*/
+                cont=0;
+                for(int i = 0; i < QuantidadeDeRecursos; i++){ 
+                    if(infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i] + 
+                       infoTarefas[vetIndObjOrd2[vetAux[next]-1]].QuantidadeDeRecursosConsumidos[i] <= QuantidadeDeCadaRecursoDisponivel[i]
+                       && vetDeExecucao[vetIndObjOrd2[prev]-1] != 1){
+                            
+                            cont+=1;
+                       }
+                }
+                if(cont == QuantidadeDeRecursos){
+                    vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
+                    vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]-1] = 1;
+                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = 0;
+                    infoTarefas[vetIndObjOrd2[vetAux[next]-1]-1].TempoDeInicio = 0;
+                }
+            
+            }
+            if(vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == 1 || vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == -1){
+                cont=0;
+                if(vetDeExecucao[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor] == 1){
+                    for(int i = 0; i < QuantidadeDeRecursos; i++){ 
+                        if(infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i] + 
+                       infoTarefas[vetIndObjOrd2[vetAux[next]-1]].QuantidadeDeRecursosConsumidos[i] <= QuantidadeDeCadaRecursoDisponivel[i]
+                       && vetDeExecucao[vetIndObjOrd2[prev]-1] != 1){
+                            
+                            cont+=1;
+                       }
+                    }
+                    if(cont == QuantidadeDeRecursos){
+                        vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
+                        vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]-1] = 1;
+                        infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = 
+                        infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].TempoDeInicio + 
+                        infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].DuracaoDaTarefa;
+                        
+                        infoTarefas[vetIndObjOrd2[vetAux[next]-1]-1].TempoDeInicio = 
+                        infoTarefas[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor].TempoDeInicio + 
+                        infoTarefas[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor].DuracaoDaTarefa;
+                    }
+                }else{
+                    vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
+                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].TempoDeInicio + infoTarefas[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor].DuracaoDaTarefa;
+                    Contador[prev] =  infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio + infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa;
+                }
+               
+            }
+        }
+    }
+
+
+    
+  /* for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
+        cout << vetDeExecucao[j] << " ";
+    }
+    cout<<endl;
+   for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
+        cout << vetIndObjOrd2[j]<< " ";
+    }
+    cout<<endl;
+   for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
+        cout << infoTarefas[vetIndObjOrd2[j]-1].TempoDeInicio<< " ";
+    }*/
+
+    memcpy(&vetorGeraldeInformacoes, &infoTarefas, sizeof(vetorGeraldeInformacoes));
+    CalculoFo(infoTarefas);
+
+
+    
 }
 
 void CalculoFo(DadosDasTarefas infoTarefas[]){
+    int Max=0, aux=0;
+    for(int i=0; i<(QuantidadeDeTarefas+2); i++){
+        aux = infoTarefas[i].TempoDeInicio + infoTarefas[i].DuracaoDaTarefa;
+        if(aux>Max){
+            Max = aux;
+        }
+    }
 
+    FO = Max;
+    for(int j=0; j<(QuantidadeDeTarefas+2); j++){
+        FO += Contador[j];
+    }
+
+    EscreverSolucao(infoTarefas, Max);
+    
 }
 
-void TempoDeExecucao(){
+void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
+    clock_t h;
+    double tempo;
+    const int repeticoes = 1000;
+    printf("\n\n>>> TESTE - HEURISTICAS CONSTRUTIVAS - PMM3 - %d REPETICOES\n", repeticoes);
 
+    //---
+    h = clock();
+    for(int r = 0; r < repeticoes; r++)
+        HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
+    h = clock() - h;
+    tempo = (double)h/CLOCKS_PER_SEC;
+
+   // printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
 }
 
-void EscreverSolucao(DadosDasTarefas infoTarefas[], const bool flag){
+void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
+    int i=0;
+    printf("\nFO: %d\n", FO);
+    printf("Makespan: %d\n", makespan);
+    printf("------------------------------------\n");
+    cout << "Job" << " " << "Start" << endl;
+    
+    while(i<QuantidadeDeTarefas+2){
+        cout<< infoTarefas[i].Id << "    " << infoTarefas[i].TempoDeInicio << endl;
+        i++;
+    }
+
+   
 
 }
 

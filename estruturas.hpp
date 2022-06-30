@@ -16,6 +16,7 @@ typedef struct dadosDasTarefas{
     int QuantidadeDeRecursosConsumidos[MAX_OBJ];
     int Ordem;
     int IdDoAntecessor;
+    int TempoDeInicio;
 
 }DadosDasTarefas;
 
@@ -27,6 +28,10 @@ int Matriz[MAX_TAREFAS][MAX_TAREFAS];
 int QuantidadeDeCadaRecursoDisponivel[MAX_OBJ];
 int vetIndObjOrd[MAX_TAREFAS];
 int vetIndObjOrd2[MAX_TAREFAS];
+int vetDeExecucao[MAX_TAREFAS];
+int Contador[MAX_OBJ];
+int FO;
+DadosDasTarefas vetorGeraldeInformacoes[MAX_TAREFAS];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
 
 
@@ -35,8 +40,8 @@ void PreencherMatrizDeSucessores(DadosDasTarefas DadosDasTarefas[]);
 void OrdemDeExecucao(DadosDasTarefas infoTarefas[]);
 void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual);
 void CalculoFo(DadosDasTarefas infoTarefas[]);
-void TempoDeExecucao();
-void EscreverSolucao(DadosDasTarefas infoTarefas[], const bool flag);
+void TempoDeExecucao(DadosDasTarefas infoTarefas[]);
+void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan);
 void LerDados();
 
 
