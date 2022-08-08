@@ -738,9 +738,16 @@ void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
    printf("Construtiva Aleatoria Gulosa...: %.5f seg.\n", tempo);
 }
 
-void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
+void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan, double &tempo_melhor){
     int i=0;
-    printf("\nFO: %d\n", FO);
+    float FOMed = FO/3; //alterar aqui colocando cada FO de cada execução
+    float desv = ((FOMed - FO)/FO)*100;
+    float TempMed = (tempo_melhor/3);  //alterar aqui colocando cada TEMPO de cada execução
+    printf("\nMelhor FO: %d\n", FO);
+    printf("\nFO Média: %0.3f\n", FOMed);
+    printf("\nDesvio: %0.3f\n",  desv);
+    //printf("\nMelhor Tempo: %d", tempo_melhor); //provavel alteração aqui colocando o melhor tempo de cada execução
+    //printf("\nTempo Médio: #0.3%f", TempMed); 
     printf("Makespan: %d\n", makespan);
     printf("------------------------------------\n");
     cout << "Job" << " " << "Start" << endl;
