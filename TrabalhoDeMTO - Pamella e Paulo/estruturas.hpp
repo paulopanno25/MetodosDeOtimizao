@@ -20,12 +20,7 @@ typedef struct dadosDasTarefas{
 
 }DadosDasTarefas;
 
-typedef struct tempoerecursos{
-    int RecursosUsadosNoTempo[MAX_OBJ];
-}TempoERecursos;
-
-
-int entrada[MAX_TAREFAS];// vetor que armazena todos os dados inteiros de uma linha do arquivo
+int entrada[MAX_TAREFAS];// vetor que armazena todos os dados inteiros de uma linha d arquivo
 
 int QuantidadeDeRecursos;
 int QuantidadeDeTarefas;
@@ -38,10 +33,7 @@ int Contador[MAX_OBJ];
 int FO;
 DadosDasTarefas vetorGeraldeInformacoes[MAX_TAREFAS];
 int ptemp[MAX_OBJ],ptemp2[MAX_OBJ];
-int MaiorMKSPpossivel;
-int Tam_ordenacao[MAX_TAREFAS];
-int QuantidadeDeVizinhancas;
-int Posicao_Vet_Tam_Ordenacao[MAX_TAREFAS];
+
 
 //leitura do arquivo sol
 int fo;
@@ -49,12 +41,10 @@ int Mkspan;
 
 
 
-
 void lerArquivo();
 void PreencherMatrizDeSucessores(DadosDasTarefas DadosDasTarefas[]);
 void OrdemDeExecucao(DadosDasTarefas infoTarefas[]);
-void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual, int MAXmakespan);
-void GerarVizinhosBT(const int tam_list, const double tempo_max, DadosDasTarefas infoTarefas[], double &tempo_melhor, double &tempo_total);
+void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual);
 void CalculoFo(DadosDasTarefas infoTarefas[]);
 void TempoDeExecucao(DadosDasTarefas infoTarefas[]);
 void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan);

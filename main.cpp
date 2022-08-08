@@ -24,8 +24,14 @@ using std::fill_n; using std::istringstream;
 
 
 int main(){
+    int seed=0;
+    double tempo_melhor, tempo_total, limite=300.00;
 
     lerArquivo();
+    srand(seed);
+    
+    GerarVizinhosBT(QuantidadeDeVizinhancas, limite, vetorGeraldeInformacoes, tempo_melhor, tempo_total);
+    
     LerDados();
 
     return 0;
@@ -34,7 +40,7 @@ int main(){
 
 void lerArquivo(){
 
-    string filename("j12060_7.sm");
+    string filename("j301_1.sm");
     string word;
     vector<string> words;
     vector<string> words2;
@@ -42,7 +48,7 @@ void lerArquivo(){
     DadosDasTarefas DadosDasTarefas[MAX_TAREFAS];
     
 
-    ifstream input_file("j12060_7.sm");
+    ifstream input_file("j301_1.sm");
     
     if(!input_file.is_open()){
         cerr << "Não foi possivel abrir o arquivo- '" << filename << "'" << endl;
@@ -180,6 +186,7 @@ void lerArquivo(){
     }
 
     PreencherMatrizDeSucessores(DadosDasTarefas);
+   // memcpy(vetorGeraldeInformacoes, DadosDasTarefas, sizeof(DadosDasTarefas)*MAX_TAREFAS);
     OrdemDeExecucao(DadosDasTarefas);
 
        
@@ -222,6 +229,7 @@ void PreencherMatrizDeSucessores(DadosDasTarefas infoTarefas[]){
 
 void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
     int flag,aux,aux2=0,f,aux3;
+    int MAXmakespan=0;
 
     
     //Zera vetor de ordems
@@ -279,24 +287,63 @@ void OrdemDeExecucao(DadosDasTarefas infoTarefas[]){
             }
         }
     }
+    int qtd=0;
+    QuantidadeDeVizinhancas=0;
+    for(int q=0;q<QuantidadeDeTarefas+2;q++){
+        for(int vordem=0;vordem<QuantidadeDeTarefas+2;vordem++){
+            if(vetIndObjOrd[vordem] == q){
+            qtd++;
+            }
+        }
+        Tam_ordenacao[q] = qtd;
+        if(qtd!=0){
+            QuantidadeDeVizinhancas++;
+        }
+        qtd=0;
+        //cout << "Qtd " << Tam_ordenacao[q]<<endl;
+    }
+
+   memset(Posicao_Vet_Tam_Ordenacao, 0, sizeof(Posicao_Vet_Tam_Ordenacao));
+    int maux=0;
+    for(int g=0;g<QuantidadeDeTarefas+2;g++){
+        if(vetIndObjOrd[g]!=maux){
+            Posicao_Vet_Tam_Ordenacao[maux+1]=g;
+            maux++;
+        }
+        
+    }
+
+    /*for(int p=0;p<QuantidadeDeTarefas+2;p++){
+        cout<<Posicao_Vet_Tam_Ordenacao[p]<<" ";   
+    }cout<<endl;*/
+   // cout << "Qtd " << QuantidadeDeVizinhancas;
     
    //imprime Id e ordem da tarefa e duração
-   /* for(int j=0;j<(QuantidadeDeTarefas+2);j++){
+    /*for(int j=0;j<(QuantidadeDeTarefas+2);j++){
         int aux4=vetIndObjOrd2[j];
-        cout<< vetIndObjOrd2[j] <<" - Ordem: "<< vetIndObjOrd[j] << " ,Duracao: " <<infoTarefas[aux4-1].DuracaoDaTarefa <<endl;  
+        cout<< vetIndObjOrd2[j] <<" - Ordem: "<< vetIndObjOrd[j] << " ,Duracao: " <<infoTarefas[aux4-1].IdDoAntecessor <<endl;  
     }*/
 
-    HeuConstAleGul(infoTarefas, 10);//10% de aleatoriedade
+    for(int p=0; p < (QuantidadeDeTarefas+2);p++){
+        //cout << "duracao da tarefa = " << infoTarefas[p].DuracaoDaTarefa << endl;
+        MAXmakespan += infoTarefas[p].DuracaoDaTarefa;
+    }
+    MaiorMKSPpossivel = MAXmakespan;
+
+   HeuConstAleGul(infoTarefas, 10, MAXmakespan);//10% de aleatoriedade
     //TempoDeExecucao(infoTarefas);
     
 
 }
 
-void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
-    int tam, pos, aux;
+void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual, int MAXmakespan){
+    int tam, pos, aux, PontoInicioTarefa=0, PontoInicioTarefa2=0;
     int vetAux[MAX_TAREFAS];
+    int decrescedorDeTempo, decrescedorDeTempo1;
+    TempoERecursos tempERecursos[MAXmakespan];
+    int MatrizDeTempo[QuantidadeDeTarefas+2][MAXmakespan];
    
-   
+   // cout << "Max makespan possivel = " << MAXmakespan << endl;
     memcpy(&vetAux, &vetIndObjOrd2, sizeof(vetIndObjOrd2));
    
     tam = MAX(1, (percentual / 100.0) * (QuantidadeDeTarefas+2));
@@ -314,72 +361,215 @@ void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
     vetIndObjOrd[0] = -1;
     vetDeExecucao[0]= -1;
     int cont=0;
-    
-
-    for(int prev=0; prev<(QuantidadeDeTarefas+2);prev++){
-        for(int next = prev+1; next<(QuantidadeDeTarefas+2);next++){
-            int aux2[QuantidadeDeRecursos];
-            if((vetIndObjOrd[prev]) == 0 && vetIndObjOrd[vetAux[next]-1] == 0 && (vetIndObjOrd2[prev] != vetIndObjOrd2[vetAux[next]-1])){
-               /* cout<< (vetIndObjOrd[prev]) << " ";
-                cout<< vetIndObjOrd2[prev] << " ";
-                cout<< vetIndObjOrd[vetAux[next]-1] << " ";
-                cout<< vetIndObjOrd2[vetAux[next]-1] << " ";
-                cout<<endl;*/
-                cont=0;
-                for(int i = 0; i < QuantidadeDeRecursos; i++){ 
-                    if(infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i] + 
-                       infoTarefas[vetIndObjOrd2[vetAux[next]-1]].QuantidadeDeRecursosConsumidos[i] <= QuantidadeDeCadaRecursoDisponivel[i]
-                       && vetDeExecucao[vetIndObjOrd2[prev]-1] != 1){
-                            
-                            cont+=1;
-                       }
-                }
-                if(cont == QuantidadeDeRecursos){
-                    vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
-                    vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]-1] = 1;
-                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = 0;
-                    infoTarefas[vetIndObjOrd2[vetAux[next]-1]-1].TempoDeInicio = 0;
-                }
-            
-            }
-            if(vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == 1 || vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == -1){
-                cont=0;
-                if(vetDeExecucao[infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor] == 1){
-                    for(int i = 0; i < QuantidadeDeRecursos; i++){ 
-                        if(infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i] + 
-                       infoTarefas[vetIndObjOrd2[vetAux[next]-1]].QuantidadeDeRecursosConsumidos[i] <= QuantidadeDeCadaRecursoDisponivel[i]
-                       && vetDeExecucao[vetIndObjOrd2[prev]-1] != 1){
-                            
-                            cont+=1;
-                       }
-                    }
-                    if(cont == QuantidadeDeRecursos){
-                        vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
-                        vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]-1] = 1;
-
-                        int antecPosicao = (infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor);
-                        int antecPosicaoNEXT = (infoTarefas[vetIndObjOrd2[vetAux[next]-1]].IdDoAntecessor);
-
-                        infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = 
-                        infoTarefas[antecPosicao].TempoDeInicio + infoTarefas[antecPosicao].DuracaoDaTarefa;
-                        
-                        infoTarefas[vetIndObjOrd2[vetAux[next]-1]-1].TempoDeInicio = 
-                        infoTarefas[antecPosicaoNEXT].TempoDeInicio + infoTarefas[antecPosicaoNEXT].DuracaoDaTarefa;
-                    }
-                }else{
-                    vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
-                    int antecPosicao = (infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor);
-                    infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = infoTarefas[antecPosicao].TempoDeInicio + infoTarefas[antecPosicao].DuracaoDaTarefa;
-                    Contador[prev] =  infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio + infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa;
-                }
-               
-            }
+   
+     for(int k=0;k<(QuantidadeDeTarefas+2);k++){
+        for(int z=0;z<(MAXmakespan);z++){
+            MatrizDeTempo[k][z] =0;
         }
     }
 
+    for(int m=0;m<QuantidadeDeTarefas+2;m++){
+        infoTarefas[m].TempoDeInicio = 0;
+    }
+
+    for(int z=0; z<(MAXmakespan);z++){
+        for(int h=0; h<QuantidadeDeRecursos;h++){
+            tempERecursos[z].RecursosUsadosNoTempo[h] = QuantidadeDeCadaRecursoDisponivel[h]; 
+        }   
+    } 
+
+    for(int prev=1; prev<(QuantidadeDeTarefas+2);prev++){
+        for(int next = prev+1; next<(QuantidadeDeTarefas+2);next++){
+            int aux2[QuantidadeDeRecursos];
+
+            if(((vetIndObjOrd[prev]) == 0 && vetIndObjOrd[vetAux[next]-1] == 0 ) && (vetIndObjOrd2[prev] != vetIndObjOrd2[vetAux[next]])
+            && vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] != 1){
+             
+                cont=0;
+
+                for(int i = 0; i < QuantidadeDeRecursos; i++){ 
+                    if(infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i] + 
+                       infoTarefas[vetIndObjOrd2[vetAux[next]-1]].QuantidadeDeRecursosConsumidos[i] <= tempERecursos[0].RecursosUsadosNoTempo[i]
+                       && vetDeExecucao[vetIndObjOrd2[prev]-1] != 1 && vetIndObjOrd2[vetAux[next]-1] != 1){
+
+                       cont+=1;
+                        
+                       }
+                       
+                }
+                if(cont == QuantidadeDeRecursos){
+                    
+                  //  cout << "id tarefa 1: " << infoTarefas[vetIndObjOrd2[prev]-1].Id << endl;
+           
+                    //cout << "id tarefa 2: " << infoTarefas[vetIndObjOrd2[vetAux[next]-1]].Id << endl;
+
+                    vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
+                    vetDeExecucao[vetIndObjOrd2[vetAux[next]-1]] = 1;
+                    
+
+                    decrescedorDeTempo = (infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa)-1;
+                    decrescedorDeTempo1 = (infoTarefas[vetIndObjOrd2[vetAux[next]-1]].DuracaoDaTarefa)-1;
+
+                    PontoInicioTarefa = 0;
+                    
+                    PontoInicioTarefa2 = 0;
+                    
+                    
+                   for(int v=decrescedorDeTempo1; v>-1;v--){
+                            MatrizDeTempo [(infoTarefas[vetIndObjOrd2[vetAux[next]-1]].Id)-1][PontoInicioTarefa2]=1;
+                           PontoInicioTarefa2++;
+                   }
+
+                   for(int v=decrescedorDeTempo; v>-1;v--){
+                            MatrizDeTempo [(infoTarefas[vetIndObjOrd2[prev]-1].Id)-1][PontoInicioTarefa]=1;
+                           PontoInicioTarefa++;
+                   }
+
+
+                   /* for(int df=0;df<QuantidadeDeTarefas+2;df++){
+                            cout<< vetDeExecucao[df]<< " ";
+                        }cout<<endl;*/
+
+
+                }
+                    //Guarda a quantidade de recursos disponivel por tempo que começam em zero;
+                    for(int z=0; z<(MAXmakespan);z++){
+                        for(int h=0; h<QuantidadeDeRecursos;h++){
+                            tempERecursos[z].RecursosUsadosNoTempo[h] = QuantidadeDeCadaRecursoDisponivel[h]; 
+                        }
+                        for(int k=0;k<(QuantidadeDeTarefas+2);k++){
+                            if(MatrizDeTempo[k][z]==1){
+                                
+                                for(int g=0; g<QuantidadeDeRecursos;g++){
+                                    tempERecursos[z].RecursosUsadosNoTempo[g] -= (infoTarefas[k].QuantidadeDeRecursosConsumidos[g]);
+                                }
+                            }
+                        }
+                    }
+
+                 
+
+                   
+            
+            }
+
+            if(vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == 1 || /*(vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor] == -1 &&*/ 
+            vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].Id-1 ] != 1){
+                cont=0;
+                
+
+                if(vetDeExecucao[infoTarefas[vetIndObjOrd2[prev]-1].Id-1] == 0 ){
+                    
+                    
+                    for(int y=0; y<MAXmakespan;y++){ 
+                        cont=0;
+                        //cout << tempERecursos[y].RecursosUsadosNoTempo[0] << " ";
+                        //cout << tempERecursos[y].RecursosUsadosNoTempo[1] << endl;
+                        for(int i = 0; i < QuantidadeDeRecursos; i++){
+                            
+                            if((tempERecursos[y].RecursosUsadosNoTempo[i] - infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[i]) >= 0){
+                        
+                                cont+=1;
+                                
+                            }
+                        }  
+
+                        if(infoTarefas[vetIndObjOrd2[prev]-1].Ordem==0){
+                            infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor=1;
+                        }
+
+
+                            if(cont == QuantidadeDeRecursos && y>(infoTarefas[(infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor)-1].TempoDeInicio +
+                                                                    infoTarefas[(infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor)-1].DuracaoDaTarefa )-1){
+                                //cout << "id tarefa 1: " << infoTarefas[vetIndObjOrd2[prev]-1].Id << endl;
+                                
+                                
+                                int verificaRecursos=0;
+                                int inicio=y,incioVerificado=y;
+                                int Auxp=0;
+                                
+                                for(int a=inicio; a<inicio+(infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa) ; a++){
+                                    for (int w=0;w<(QuantidadeDeRecursos);w++){
+                                        Auxp = tempERecursos[a].RecursosUsadosNoTempo[w];
+                                        if(( Auxp -=  infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[w])>=0){
+                                                verificaRecursos+=1;
+                                        }else{
+                                            incioVerificado++;
+                                        }
+                                        
+                                    }
+                                }
+
+                                //cout << "y verificado: " << incioVerificado<< endl;
+                                if(verificaRecursos<infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa){
+                                    y=incioVerificado-1;
+                                }
+                  
+                                for(int a=y; a<y+(infoTarefas[vetIndObjOrd2[prev]-1].DuracaoDaTarefa) ; a++){
+                                    MatrizDeTempo [(infoTarefas[vetIndObjOrd2[prev]-1].Id)-1][a] = 1;
+                                    for (int w=0;w<(QuantidadeDeRecursos);w++){
+                                       // cout << tempERecursos[a].RecursosUsadosNoTempo[w]<<" ";
+                                        tempERecursos[a].RecursosUsadosNoTempo[w] -=  infoTarefas[vetIndObjOrd2[prev]-1].QuantidadeDeRecursosConsumidos[w];
+                                    }
+                                }//cout<<endl;
+                               
+                               
+                              /* cout <<"Y: "<< y <<endl; 
+                                cout <<" tempo de inicio do antecessor: "<< infoTarefas[(infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor)-1].TempoDeInicio <<endl;
+                                cout <<"duracao do antecessor: "<< infoTarefas[(infoTarefas[vetIndObjOrd2[prev]-1].IdDoAntecessor)-1].DuracaoDaTarefa <<endl;                                              
+                                */
+                                
+                                vetDeExecucao[vetIndObjOrd2[prev]-1] = 1;
+                                infoTarefas[vetIndObjOrd2[prev]-1].TempoDeInicio = y;
+
+                                
+
+                               
+
+                                y=MAXmakespan;
+
+                              /*  for(int b=0; b<QuantidadeDeRecursos;b++){
+                                    for(int l=0;l<MAXmakespan;l++){
+                                        cout << tempERecursos[l].RecursosUsadosNoTempo[b] << " ";
+                                    }cout<<endl;
+                                }*/
+
+
+
+                            
+                        }//cout<< endl;
+                    }
+
+
+                    
+
+               /* for(int df=0;df<QuantidadeDeTarefas+2;df++){
+                        cout<< vetDeExecucao[df]<< " ";
+                    }cout<<endl;*/
+               
+            }
+            
+            }
+        }
+    }
+    
+
+   /* for(int f=0; f<(QuantidadeDeTarefas+2);f++){
+        for(int n=0;n<(MAXmakespan);n++){
+            cout<< MatrizDeTempo[f][n] << " ";
+        }cout << endl;
+
+    }
+
+                   for(int b=0; b<QuantidadeDeRecursos;b++){
+                        for(int l=0;l<MAXmakespan;l++){
+                            cout << tempERecursos[l].RecursosUsadosNoTempo[b] << " ";
+                        }cout<<endl;
+                    } 
+
 
     
-    /* for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
+   /* for(int j = 0; j < (QuantidadeDeTarefas+2); j++){
         cout << vetDeExecucao[j] << " ";
     }
     cout<<endl;
@@ -391,11 +581,129 @@ void HeuConstAleGul(DadosDasTarefas infoTarefas[], const int percentual){
         cout << infoTarefas[vetIndObjOrd2[j]-1].TempoDeInicio<< " ";
     }*/
 
-    memcpy(&vetorGeraldeInformacoes, &infoTarefas, sizeof(vetorGeraldeInformacoes));
-    CalculoFo(infoTarefas);
+    memcpy(vetorGeraldeInformacoes, infoTarefas, sizeof(DadosDasTarefas)*MAX_TAREFAS);
+   // CalculoFo(vetorGeraldeInformacoes);
 
 
     
+}
+
+void GerarVizinhosBT(const int tam_list, const double tempo_max, DadosDasTarefas infoTarefas[], double &tempo_melhor, double &tempo_total){
+
+clock_t hI, hF;
+    DadosDasTarefas s_vizinha[MAX_TAREFAS];
+    int flag, pos=0, mocOri, foOri, melViz, melObj, melID, melPosicao, qtd_lista;
+    int lista_tabu[QuantidadeDeTarefas+2];
+    
+    printf("\n\n>>> EXECUTANDO A BT...\n\n");
+    hI = clock();
+    HeuConstAleGul(infoTarefas ,10, MaiorMKSPpossivel);
+    CalculoFo(infoTarefas);
+    hF = clock();
+    tempo_melhor = ((double)(hF - hI))/CLOCKS_PER_SEC;
+    
+   // #ifdef DBG
+      // printf("FO: %d\tTempo: %.2f\n", MaiorMKSPpossivel, tempo_melhor);
+   // #endif
+    tempo_total = tempo_melhor;
+    // memcpy(s_vizinha, vetorGeraldeInformacoes, sizeof(DadosDasTarefas)*MAX_TAREFAS);
+    //---------------------------
+    // Criar a lista tabu
+    int lista_nova_ordenacao[QuantidadeDeTarefas+2];
+
+    for(int i=0; i<QuantidadeDeTarefas+2;i++){
+        lista_nova_ordenacao[i]=vetIndObjOrd2[i];
+        lista_tabu[i]=vetIndObjOrd2[i];
+    }
+
+    foOri = FO;
+
+   while(tempo_total < tempo_max){
+    int x=0;
+    for(int u=0;u<QuantidadeDeVizinhancas;u++){
+        
+        for(int i=0; i<QuantidadeDeTarefas+2;i++){
+            lista_nova_ordenacao[i]=vetIndObjOrd2[i];
+        }
+
+        int Nova_FO = FO;
+        x = Tam_ordenacao[u];
+     
+
+        if(Posicao_Vet_Tam_Ordenacao[u]==0){
+            Posicao_Vet_Tam_Ordenacao[u]=1;
+            Tam_ordenacao[u]=Tam_ordenacao[u]-1;
+        }
+
+        for(int vizin=Posicao_Vet_Tam_Ordenacao[u]; vizin < Posicao_Vet_Tam_Ordenacao[u]+Tam_ordenacao[u]-1; vizin++){
+            
+            int aux=vetIndObjOrd2[vizin];
+            int aux2;
+            for(int vizin2 = Posicao_Vet_Tam_Ordenacao[u];vizin2<Posicao_Vet_Tam_Ordenacao[u]+Tam_ordenacao[u]-1;vizin2++){
+                
+                aux=vetIndObjOrd2[vizin2+1];
+                aux2 = vetIndObjOrd2[vizin2];
+                vetIndObjOrd2[vizin2]=aux;
+                vetIndObjOrd2[vizin2+1]=aux2;
+
+                
+                
+            }
+
+            HeuConstAleGul(infoTarefas ,10, MaiorMKSPpossivel);
+            CalculoFo(infoTarefas);
+
+            if(FO>Nova_FO){
+               for(int y=0;y<QuantidadeDeTarefas+2;y++){
+                vetIndObjOrd2[y] = lista_nova_ordenacao[y];
+                } 
+                FO = Nova_FO;
+            }else if(Nova_FO>FO){
+                for(int y=0;y<QuantidadeDeTarefas+2;y++){
+                   lista_tabu[y] = vetIndObjOrd2[y];
+                }
+                //cout<<FO<<endl;
+            }
+
+
+            /*for(int y=0;y<QuantidadeDeTarefas+2;y++){
+                cout<<vetIndObjOrd2[y]<<" ";
+            }cout<<endl;*/
+            
+            
+
+            }
+        }//cout<<"Aqui"<<endl;
+    
+            
+   
+
+
+
+        for(int y=0;y<QuantidadeDeTarefas+2;y++){
+            vetIndObjOrd2[y] = lista_tabu[y];
+        }
+        
+        hF = clock();
+        HeuConstAleGul(infoTarefas ,10, MaiorMKSPpossivel);
+        CalculoFo(infoTarefas);
+        hF = clock();
+        tempo_melhor = ((double)(hF - hI))/CLOCKS_PER_SEC;
+        
+        
+        /*for(int y=0;y<QuantidadeDeTarefas+2;y++){
+            cout<<lista_tabu[y]<<" ";
+        }*/
+
+    
+        hF = clock();
+        tempo_total = ((double)hF - hI)/CLOCKS_PER_SEC;   
+
+    }
+    cout<< "Melhor Resultado: "<<endl;
+    EscreverSolucao(infoTarefas, FO);
+    printf("FO: %d\tTempo: %.2f\n", FO, tempo_melhor);
+
 }
 
 void CalculoFo(DadosDasTarefas infoTarefas[]){
@@ -406,13 +714,11 @@ void CalculoFo(DadosDasTarefas infoTarefas[]){
             Max = aux;
         }
     }
-
+    infoTarefas[QuantidadeDeTarefas+1].TempoDeInicio = Max;
     FO = Max;
-    for(int j=0; j<(QuantidadeDeTarefas+2); j++){
-        FO += Contador[j];
-    }
+    
 
-   EscreverSolucao(infoTarefas, Max);
+   //EscreverSolucao(infoTarefas, Max);
     
 }
 
@@ -425,7 +731,7 @@ void TempoDeExecucao(DadosDasTarefas infoTarefas[]){
     //---
     h = clock();
     for(int r = 0; r < repeticoes; r++)
-        HeuConstAleGul(infoTarefas, 10); // 10% de aleatoriedade
+        HeuConstAleGul(infoTarefas, 10,10); // 10% de aleatoriedade
     h = clock() - h;
     tempo = (double)h/CLOCKS_PER_SEC;
 
@@ -443,8 +749,7 @@ void EscreverSolucao(DadosDasTarefas infoTarefas[], int makespan){
         cout<< infoTarefas[i].Id << "    " << infoTarefas[i].TempoDeInicio << endl;
         i++;
     }
-
-   
+ 
 
 }
 
